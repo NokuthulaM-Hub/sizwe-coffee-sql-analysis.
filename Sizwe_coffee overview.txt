@@ -1,0 +1,137 @@
+Sizwe Coffee SQL Analysis Project
+
+1. Project Overview
+
+The project contains eight business questions:
+
+1. **Channel Performance:** How did revenue compare between FY2024 and FY2025 across sales channels?
+2. **Where the Profit Actually Comes From:** Which product lines generate the most revenue and gross profit, and which have the highest gross margins?
+3. **The Collections Problem:** Which sales channels have the largest outstanding balances and the longest settlement times?
+4. **The Ten Accounts That Matter Most:** Which ten customers generated the most revenue in FY2025?
+5. **A Commercial Gap:** Which high-revenue Wholesale customers had no recorded trade promotions in FY2025?
+6. **Sales Representative Performance:** Which sales representatives achieved or exceeded their monthly revenue targets?
+7. **The Shape of the Year:** What monthly revenue patterns and seasonal trends appear in the data?
+8. **Explaining the Gross Margin Decline:** Which product lines and changes in revenue mix help explain the decline in overall gross margin?
+
+The financial years are defined as:
+- **FY2024:** 1 July 2023 to 30 June 2024.
+- **FY2025:** 1 July 2024 to 30 June 2025.
+
+2. Dataset
+
+The project uses the Sizwe Coffee dataset, which contains information about sales, products, customers, collections, trade promotions, and sales representatives.
+
+### Tables used
+
+| Table | Purpose |
+|---|---|
+| `sizwe_sales_orders` | Contains order-level information, including order dates, sales channels, customer references, and sales representative references. |
+| `sizwe_sales_lines` | Contains sales-line information, including order references, product SKU references, line revenue, and cost of goods sold (COGS). |
+| `sizwe_products` | Provides product information, including SKU and product line. |
+| `sizwe_customers` | Provides customer details, including customer names, segments, provinces, and other customer attributes. |
+| `sizwe_ar_ledger` | Contains invoice amounts, due dates, settlement dates, and outstanding balances used to analyse collections. |
+| `sizwe_trade_promotions` | Contains trade promotion records used to identify customers without recorded promotions. |
+| `sizwe_reps` | Contains sales representative details, territories, hire dates, and monthly targets. |
+
+### How the tables connect
+
+The tables are connected using their common identifiers:
+
+- `sizwe_sales_orders.order_id` connects to `sizwe_sales_lines.order_id`.
+- `sizwe_sales_lines.sku` connects to `sizwe_products.sku`.
+- Customer identifiers connect sales orders, customer details, the accounts receivable ledger, and trade promotion records where applicable.
+- `sizwe_sales_orders.rep_id` connects to `sizwe_reps.rep_id`.
+- `sizwe_ar_ledger` provides invoice and payment information for collection analysis.
+
+These relationships allow the analysis to combine order, product, customer, representative, and financial information without treating each table in isolation.
+
+3. Skills Demonstrated
+
+The project demonstrates SQL querying and analytical skills using SELECT statements and other data retrieval techniques.
+
+| SQL skill | Task(s) | How it was used |
+|---|---|---|
+| `SELECT` and column aliases | Tasks 1–8 | Selected relevant columns and gave calculated results clear names. |
+| `INNER JOIN` | Tasks 1, 2, 4, 8 | Combined related tables to analyse revenue, products, and customers. |
+| `LEFT JOIN` | Task 6 | Included sales representatives even when no qualifying sales were found. |
+| `GROUP BY` and aggregate functions | Tasks 1–8 | Used `SUM`, `COUNT`, and `AVG` to summarise revenue, profit, invoices, and performance. |
+| `CASE` expressions | Tasks 1 and 8 | Separated revenue by financial year and calculated year-specific measures. |
+| Date filtering | Tasks 1, 4, 5, 6, 7 and 8 | Applied financial-year boundaries and grouped revenue by month. |
+| `ROUND` and percentage calculations | Tasks 2, 6, 7 and 8 | Calculated and formatted gross margins, target achievement, and percentage changes. |
+| Common Table Expressions (CTEs) | Tasks where intermediate calculations were required | Organised multi-step queries into readable stages before producing the final results. |
+| `NOT EXISTS` | Task 5 | Identified Wholesale customers without matching trade promotion records. |
+| `LAG()` window function | Task 7 | Compared each month's revenue with the previous month's revenue. |
+| Window frames and rolling averages | Task 7 | Calculated a rolling three-month average of monthly revenue. |
+| `NULLIF` and `COALESCE` | Tasks 6 and other calculations where applicable | Helped handle zero denominators and missing sales values safely. |
+| Sorting and limiting results | Tasks 4 and 5 | Ranked customers by revenue and returned the requested shortlist. |
+
+4. How to Run
+
+### Tool used
+
+The queries were developed and run in **DuckDB Web Shell**, using PostgreSQL-compatible SQL. The SQL is intended for DuckDB; PostgreSQL compatibility does not mean every PostgreSQL-specific feature is supported identically by every tool.
+
+### Steps to reproduce the results
+
+1. Open DuckDB Web Shell.
+2. Upload or add the Sizwe Coffee CSV dataset files.
+3. Create a table for each CSV file. 
+4. Repeat the table-creation process for the other CSV files, using the appropriate filenames and table names.
+5. Check that the tables and columns have loaded correctly before running the assignment queries.
+6. Run the eight SQL queries individually, in task order.
+7. Review the output tables and use the results to write the business recommendations.
+8. Save the SQL queries in a `.sql` file, such as `Sizwe_Coffee_Assignment.sql`, so the analysis can be reproduced later.
+
+5. Key Insights
+
+### Task 1: Channel Performance
+
+The analysis compared revenue across sales channels for FY2024 and FY2025. The results can be used to identify which channels grew or declined and where sales management should focus. The channel-level figures should be taken directly from the Task 1 output when reporting exact growth rates.
+
+### Task 2: Where the Profit Actually Comes From
+
+The product-line analysis showed that **House Blend generated the highest gross profit**, at approximately **107.15 million**, while **Single Origin had the highest gross margin, at 44.27%**. Bulk Commercial generated approximately **271.84 million in revenue** but had the lowest gross margin, at **19.90%**.
+
+**Recommendation:** Protect House Blend's profitability, explore opportunities to grow Single Origin, and investigate Bulk Commercial's costs and pricing.
+
+### Task 3: The Collections Problem
+
+Wholesale had approximately **87.85 million in outstanding balances**, with an average settlement time of **68.68 days**. Subscription performed substantially better, with approximately **751,178.89 outstanding** and an average settlement time of **3.85 days**.
+
+**Recommendation:** Nomsa and Bongani should prioritise Wholesale collections by reviewing overdue invoices, following up with customers, and investigating the reasons for delayed payments.
+
+### Task 4: The Ten Accounts That Matter Most
+
+Halvane Retail Group was the largest customer in the FY2025 results, generating approximately **38.40 million** in revenue. The next two customers were Highveld Deli 85, at approximately **3.38 million**, and Table Bay Foods 280, at approximately **3.33 million**.
+
+**Recommendation:** Protect key customer relationships through reliable service, regular engagement, and appropriate retention strategies. The substantial difference between the first customer and the rest of the top ten also makes customer concentration worth monitoring.
+
+### Task 5: A Commercial Gap
+
+Among the top Wholesale customers without recorded trade promotions, Umhlanga Fresh 108 generated approximately **3.25 million** in FY2025 revenue. Kalahari Kitchen 42 generated approximately **2.32 million**, followed closely by Ridgeway Foods 308 at approximately **2.32 million**.
+
+**Recommendation:** Consider targeted trade promotions for these customers, then monitor whether the promotions improve repeat purchases and revenue. The absence of a recorded promotion does not, by itself, prove that a promotion would increase sales.
+
+### Task 6: Sales Representative Performance
+
+The analysis compared each representative's average monthly revenue with their monthly target for FY2025. The target-achievement percentage helps identify representatives who exceeded targets and those who may need support.
+
+**Recommendation:** Use the Task 6 output to identify high performers and investigate lower achievement through territory conditions, customer coverage, and sales opportunities. Exact representative rankings should be reported from the query results.
+
+### Task 7: The Shape of the Year
+
+The monthly results showed a recurring seasonal pattern: revenue generally declined towards December and recovered from January through June. December 2023 was the quietest month in the results, with revenue of approximately **29.87 million**.
+
+**Recommendation:** Plan sales campaigns and stock levels around this pattern, with particular attention to the December slowdown and the recovery during the following months.
+
+### Task 8: Explaining the Gross Margin Decline
+
+Overall gross margin declined from **34.7% in FY2024 to 33.0% in FY2025**, even though revenue grew by nearly **9%**. Bulk Commercial revenue increased from approximately **110.34 million to 161.50 million**, and it represented **33.65% of FY2025 revenue** while achieving a gross margin of only **19.91%**. This shift towards a large, lower-margin product line put downward pressure on the overall margin. House Blend revenue also declined from approximately **141.75 million to 137.78 million**.
+
+**Recommendation:** Investigate Bulk Commercial's pricing and costs, and assess opportunities to improve the product mix while protecting sales and profitability in higher-margin lines.
+
+6. Overall Conclusion
+
+The Sizwe Coffee analysis shows why revenue growth alone is not enough to measure business performance. House Blend contributes the largest gross profit, Single Origin has the strongest gross margin, Wholesale presents the most significant collections concern, and December is the quietest month in the observed sales pattern. The growth in lower-margin Bulk Commercial sales also helps explain why overall gross margin fell despite revenue growth.
+
+Nomsa and Bongani can use these findings to prioritise collections, protect valuable customer relationships, evaluate promotional opportunities, support sales representatives, plan for seasonality, and improve profitability through better cost control and product-mix decisions.
