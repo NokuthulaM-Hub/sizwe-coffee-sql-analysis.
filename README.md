@@ -1,4 +1,6 @@
-Hi, I’m Nokuthula 
+Hi, 
+
+I’m Nokuthula 
 
 Aspiring Data Analyst | HR Professional | People Analytics Enthusiast
 
